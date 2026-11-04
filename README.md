@@ -1,31 +1,29 @@
-# 🎬 Backlight - Multi-Monitor Recording Backlight
+# Backlight
 
-A sleek, intuitive full-screen backlight application for multi-monitor setups. Perfect for webcam recordings, streaming, or creating custom ambient lighting on all your displays simultaneously.
+A full-screen colored backlight for multi-monitor setups. Every connected display is filled with one adjustable color, which is handy as soft light for webcam recordings and streams.
+
+Built with PyQt5. Works on Wayland (tested on KDE Plasma) and X11. Each display gets its own fullscreen window, assigned through Qt's screen list, so placement doesn't depend on `xrandr`.
 
 ## Features
 
-✨ **Multi-Monitor Support** - Works across all connected displays simultaneously
-🎨 **Full HSV Color Control** - Adjust Hue, Saturation, and Brightness independently
-📊 **Real-Time Adjustments** - Instant feedback on all screens
-🎯 **Quick Presets** - One-click color presets (Warm, Cool, Red, Green)
-🔘 **Easy Toggle** - Quick on/off button for recording starts
-💾 **Minimal Footprint** - Lightweight control panel stays on top
-🖥️ **Full-Screen Mode** - Fills entire displays without taskbar interference
+- Fills all connected displays at once
+- Hue, saturation and brightness sliders, applied live
+- Presets: Soft, Golden, Bright (warm tones) and Cool, Red, Green, Purple
+- ON/OFF button (OFF turns all screens black without losing your settings)
+- Small always-on-top control panel on the primary screen
+- Starts with a warm golden light (hue 30°, 78% saturation, 78% brightness)
 
-## Installation
+## Install
 
-### Prerequisites
-- Python 3.7+
-- PyQt5
-
-### Quick Start
+Requires Python 3 and PyQt5.
 
 ```bash
-cd /home/hans/Projects/backlight
+git clone https://github.com/HansF/backlight.git
+cd backlight
 ./run.sh
 ```
 
-The script will automatically create a virtual environment and install dependencies.
+`run.sh` creates a virtual environment, installs the requirements and starts the app. It can be launched from any directory.
 
 ### Add to the application menu
 
@@ -33,130 +31,43 @@ The script will automatically create a virtual environment and install dependenc
 ./install.sh
 ```
 
-This creates a `Backlight` entry in your start/application menu.
+This creates a `Backlight` entry in your start/application menu (`~/.local/share/applications/backlight.desktop`) that points at this folder. Run it again if you move the folder.
 
-### Manual Installation
+### Manual
 
 ```bash
-# Create virtual environment
 python3 -m venv venv
 source venv/bin/activate
-
-# Install dependencies
 pip install -r requirements.txt
-
-# Run the application
 python3 backlight.py
 ```
 
-## Usage
+## Controls
 
-### Controls
+| Control | Effect |
+|---|---|
+| **Hue** (0-360°) | Base color |
+| **Sat** (0-100%) | 100% is vivid, 0% is white |
+| **Bright** (0-100%) | Intensity |
+| **Presets** | Sets hue/saturation/brightness in one click |
+| **ON / OFF** | Toggle the backlight (OFF = black screens) |
+| **EXIT** | Closes the control panel and all backlight windows |
 
-**Hue Slider** 🎨
-- Range: 0-360°
-- Controls the base color (red → yellow → green → cyan → blue → magenta → red)
-
-**Saturation Slider** 🌈
-- Range: 0-100%
-- 100% = full vibrant color
-- 0% = grayscale/white
-
-**Brightness Slider** ☀️
-- Range: 0-100%
-- Controls intensity from off to maximum brightness
-
-**Preset Buttons**
-- **Warm**: Golden/orange tone (30° hue, full sat, 78% bright) - good for evening streams
-- **Cool**: Blue tone (200° hue, full sat, 78% bright) - energetic, professional
-- **Red**: Pure red for attention/alerts
-- **Green**: Pure green for calmness
-
-**Toggle Button**
-- ◉ ON / ◎ OFF - Quickly turn the backlight on/off without adjusting settings
-- ON state: Backlight shows current color
-- OFF state: All screens go black
-
-**Exit Button**
-- ✕ Closes the application and turns off backlight
-
-### Typical Workflow for Recording
-
-1. Launch the application: `./run.sh`
-2. The control panel appears in the center of your primary screen
-3. Full-screen colored backgrounds fill all your other monitors
-4. Adjust color/brightness to your preference
-5. Click **ON** when you're ready to record
-6. Record your content with perfect backlighting
-7. Click **OFF** when done
-8. Hit **Exit** to quit
-
-## Tips & Tricks
-
-### For Webcam Recordings
-- Use **Warm** preset for a professional, natural look
-- Reduce brightness to 40-60% for subtle backlighting that doesn't wash out
-- Position your camera to capture the backlit background
-
-### For Streaming
-- Use **Cool** preset for high-energy streams
-- Keep saturation at 100% for vibrant on-camera appearance
-- Adjust brightness based on your room's ambient lighting
-
-### For Product/Content Photography
-- Experiment with **Red** or custom hues as accent lighting
-- Use lower saturation (30-70%) for more subtle, professional lighting
-
-### Keyboard Shortcuts
-- Press **ESC** to close the application immediately
-
-## Requirements
-
-- **PyQt5** 5.15.9 or higher
-- **Python** 3.7 or higher
-- X11 or Wayland display server (Linux)
+Closing the control panel window also quits the app.
 
 ## Troubleshooting
 
-### Backlight not appearing on all monitors
-- Ensure all monitors are detected by your display manager
-- Run `python3 backlight.py` directly to see debug output about detected screens
-- Check monitor connection and display settings
+- **A screen stays dark:** run `python3 backlight.py` from a terminal. It prints one line per detected display; if a screen is missing there, Qt doesn't see it.
+- **Control panel hidden behind a backlight window:** it requests always-on-top, but some window managers ignore that on fullscreen windows. Raise it via the taskbar.
+- **Crash on startup:** check that PyQt5 is installed in the venv (`pip install -r requirements.txt`).
 
-### Control panel hard to interact with
-- The control panel has "Always on Top" enabled
-- Click anywhere in the window to focus it
-- Use keyboard navigation if needed
+## Ideas
 
-### Colors look different on different monitors
-- This is normal due to monitor calibration differences
-- Try adjusting saturation/brightness on individual monitors if possible
-- Consider monitor-specific color profiles
-
-### Application crashes on startup
-- Install PyQt5: `pip install PyQt5==5.15.9`
-- Check Python version: `python3 --version` (should be 3.7+)
-- Run with debug: `python3 backlight.py` to see error messages
-
-## Performance
-
-- Minimal CPU usage (pure color rendering)
-- GPU-accelerated rendering when available
-- Negligible memory footprint (~50MB)
+- Remember the last color between runs
+- Per-monitor color and brightness
+- Keyboard shortcuts (for example ESC to quit)
+- Custom saved presets
 
 ## License
 
 GPL-3.0-or-later. See [LICENSE](LICENSE).
-
-## Future Enhancements
-
-- [ ] Settings persistence (remember last color/brightness)
-- [ ] Animation modes (fade, pulse, strobe)
-- [ ] Per-monitor independent control
-- [ ] Hotkey support for quick adjustments
-- [ ] Custom color preset saving
-- [ ] Screen recording integration
-
----
-
-Enjoy your perfectly backlit recordings! 🎬✨
