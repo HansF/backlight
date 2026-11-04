@@ -7,6 +7,7 @@ Direct approach: create windows on each physical display
 """
 
 import sys
+import os
 import subprocess
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QMainWindow, QVBoxLayout, QHBoxLayout,
@@ -339,8 +340,43 @@ class ControlPanel(QMainWindow):
         QApplication.quit()
 
 
+def inhibit_sleep():
+    """Keep the screen awake while the app runs. Released automatically on exit."""
+    if sys.platform == "darwin":
+        # caffeinate -d: no display sleep; -w: stop when this process exits
+        subprocess.Popen(["caffeinate", "-d", "-i", "-w", str(os.getpid())])
+        return True
+    ok = False
+    try:
+        from PyQt5.QtDBus import QDBusConnection, QDBusInterface
+        bus = QDBusConnection.sessionBus()
+        # Both inhibits last as long as our D-Bus connection stays open.
+        # ScreenSaver: KWin/GNOME/etc. idle + lock. PowerManagement: KDE PowerDevil dimming/sleep.
+        for service, path, name in (
+                ("org.freedesktop.ScreenSaver", "/org/freedesktop/ScreenSaver", "org.freedesktop.ScreenSaver"),
+                ("org.freedesktop.PowerManagement.Inhibit", "/org/freedesktop/PowerManagement/Inhibit",
+                 "org.freedesktop.PowerManagement.Inhibit")):
+            iface = QDBusInterface(service, path, name, bus)
+            if iface.isValid():
+                reply = iface.call("Inhibit", "Backlight", "Backlight is lighting the screens")
+                if reply.type() != reply.ErrorMessage:
+                    inhibit_sleep.ifaces.append(iface)
+                    ok = True
+    except Exception as e:
+        print(f"Sleep inhibit failed: {e}")
+    if ok:
+        return True
+    print("⚠ Could not inhibit screen sleep")
+    return False
+
+
+inhibit_sleep.ifaces = []
+
+
 def main():
     app = QApplication(sys.argv)
+    if inhibit_sleep():
+        print("✓ Screen sleep inhibited")
     screens = app.screens()
     print(f"🔥 Backlight - {len(screens)} display(s)\n")
 

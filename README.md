@@ -11,6 +11,7 @@ Built with PyQt5. Works on Wayland (tested on KDE Plasma) and X11. Each display 
 - Presets: Soft, Golden, Bright (warm tones) and Cool, Red, Green, Purple
 - ON/OFF button (OFF turns all screens black without losing your settings)
 - Small always-on-top control panel on the primary screen
+- Keeps the screens awake while it runs (screen saver, dimming and idle sleep are inhibited; released on exit)
 - Starts with a warm golden light (hue 30°, 78% saturation, 78% brightness)
 
 ## Install
@@ -57,6 +58,8 @@ python3 backlight.py
 Closing the control panel window also quits the app.
 
 ## Troubleshooting
+
+- **Screens still go to sleep:** the app asks the desktop to stay awake over D-Bus (`org.freedesktop.ScreenSaver` and `org.freedesktop.PowerManagement.Inhibit`; `caffeinate` on macOS). It prints `✓ Screen sleep inhibited` on success or a warning if no inhibit service was found.
 
 - **A screen stays dark:** run `python3 backlight.py` from a terminal. It prints one line per detected display; if a screen is missing there, Qt doesn't see it.
 - **Control panel hidden behind a backlight window:** it requests always-on-top, but some window managers ignore that on fullscreen windows. Raise it via the taskbar.
