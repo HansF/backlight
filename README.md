@@ -51,6 +51,7 @@ python3 backlight.py
 | **Bright** (0-100%) | Intensity |
 | **Presets** | Sets hue/saturation/brightness in one click |
 | **ON / OFF** | Toggle the backlight (OFF = black screens) |
+| **ESC** | Quits (works when the control panel or a backlight window has focus) |
 | **EXIT** | Closes the control panel and all backlight windows |
 
 Closing the control panel window also quits the app.
@@ -65,7 +66,7 @@ Closing the control panel window also quits the app.
 
 - Remember the last color between runs
 - Per-monitor color and brightness
-- Keyboard shortcuts (for example ESC to quit)
+- More keyboard shortcuts (brightness, presets)
 - Custom saved presets
 
 ## License

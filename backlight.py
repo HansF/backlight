@@ -32,6 +32,12 @@ class BacklightWindow(QWidget):
         self.showFullScreen()
         print(f"✓ {self.display_name}: backlight active {screen.geometry().width()}x{screen.geometry().height()}")
 
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Escape:
+            QApplication.quit()
+        else:
+            super().keyPressEvent(event)
+
     def update_color(self, color):
         rgb = color.getRgb()[:3]
         self.setStyleSheet(f"background-color: rgb({rgb[0]}, {rgb[1]}, {rgb[2]});")
@@ -316,6 +322,12 @@ class ControlPanel(QMainWindow):
             """)
         self.update_color()
 
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Escape:
+            self.close_all()
+        else:
+            super().keyPressEvent(event)
+
     def close_all(self):
         for window in self.backlight_windows:
             window.close()
@@ -324,7 +336,7 @@ class ControlPanel(QMainWindow):
     def closeEvent(self, event):
         for window in self.backlight_windows:
             window.close()
-        self.app.quit()
+        QApplication.quit()
 
 
 def main():
